@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<!-- Alpinejs -->
+		<script
+			defer
+			src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"
+		></script>
+		<!-- Tailwind CSS -->
+		<link
+			href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css"
+			rel="stylesheet"
+		/>
+		<title>Alpinejs Examples</title>
+
+		<style>
+			.active {
+				background-color: blue;
+			}
+		</style>
+	</head>
+	<body>
+		<hr class="mb-6" />
+		<!-- Example 1 -->
+		<div x-data="{first:0, second:0}">
+			<input
+				class="bg-gray-100 border p-2 m-2"
+				type="text"
+				x-model.number="first"
+			/>
+			+
+			<input
+				class="bg-gray-100 border p-2 m-2"
+				type="text"
+				x-model.number="second"
+			/>
+			=
+			<output
+				class="bg-gray-100 border p-2 m-2"
+				x-text="first + second"
+			></output>
+		</div>
+
+		<hr class="mt-6" />
+		<!-- Example 2 -->
+		<div x-data="{ currentTab: '' }">
+			<button
+				class="bg-gray-100 border p-2 m-2"
+				x-on:click="currentTab = 'first'"
+				x-bind:class="{'active': currentTab === 'first'}"
+			>
+				First
+			</button>
+			<button
+				class="bg-gray-100 border p-2 m-2"
+				x-on:click="currentTab = 'second'"
+				x-bind:class="{'active': currentTab === 'second'}"
+			>
+				Second
+			</button>
+			<button
+				class="bg-gray-100 border p-2 m-2"
+				x-on:click="currentTab = 'third'"
+				x-bind:class="{'active': currentTab === 'third'}"
+			>
+				Third
+			</button>
+			<div class="bg-gray-100 border p-2 m-2">
+				<div x-show="currentTab === 'first'">
+					<p>First Tab.</p>
+				</div>
+				<div x-show="currentTab === 'second'">
+					<p>Second Tab.</p>
+				</div>
+				<div x-show="currentTab === 'third'">
+					<p>Third Tab.</p>
+				</div>
+			</div>
+		</div>
+
+		<hr class="mt-6" />
+		<!-- Example 3-->
+		<div class="p-10 max-w-lg mx-auto">
+			<form
+				x-data="{
+                    form: {
+                        name: ''
+                    },
+
+                    user: null,
+
+                    submit() {
+                        fetch('https://reqres.in/api/users', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(this.form)
+                        })
+                        .then(response => response.json())
+                        .then(user => this.user = user);
+                    } 
+                }"
+				x-on:submit.prevent="submit"
+			>
+				<div class="mb-6">
+					<label
+						for="name"
+						class="block mb-2 uppercase font-bold text-xs text-gray-700"
+						>Name</label
+					>
+					<input
+						type="text"
+						name="name"
+						id="name"
+						required
+						class="border boder-gray-400 p-2 w-full"
+						x-model="form.name"
+					/>
+					<template x-if="user">
+						<div
+							class="mt-2"
+							x-text="'The user ' + user.name + ' was created at ' + user.createdAt"
+						></div>
+					</template>
+				</div>
+			</form>
+		</div>
+
+		<hr class="mt-6" />
+		<!-- Example 4 -->
+		<div class="p-10 max-w-lg mx-auto">
+			<div
+				class="bg-gray-300 px-10 py-6 rounded"
+				x-data="{ 
+                    tasks: [], 
+
+                    newTask: '',
+
+                    submit () {
+                        this.tasks.push({ body: this.newTask, completed: false }); 
+                        this.newTask= '';
+                    }
+                }"
+			>
+				<form x-on:submit.prevent="submit">
+					<input
+						type="text"
+						placeholder="Go to the market..."
+						x-model="newTask"
+						class="w-full px-1"
+					/>
+				</form>
+				<ul class="list-disc mt-3">
+					<template x-for="(task, index) in tasks" :key="index">
+						<li>
+							<input type="checkbox" x-model="task.completed" />
+							<span
+								x-text="task.body"
+								x-bind:class="{ 'line-through': task.completed }"
+							></span>
+						</li>
+					</template>
+				</ul>
+			</div>
+		</div>
+
+		<hr class="mt-6" />
+		<!-- Example 5 -->
+		<div class="grid items-center justify-center h-screen">
+			<div x-data="{ show: false }">
+				<div class="w-12 h-12">
+					<div
+						class="bg-green-400 w-full h-full"
+						x-show="show"
+						x-transition:enter="transition ease-out duration-300"
+						x-transition:enter-start="opacity-0 transform scale-20"
+						x-transition:enter-end="opacity-100 transform scale-100"
+						x-transition:leave="transition ease-in duration-300"
+						x-transition:leave-start="opacity-100 transform scale-100"
+						x-transition:leave-end="opacity-0 transform scale-20"
+					></div>
+				</div>
+				<button
+					x-on:click="show = ! show"
+					class="bg-blue-200 py-2 px-6 rounded text-black mt-2"
+				>
+					Toggle
+				</button>
+			</div>
+		</div>
+
+		<hr class="mt-6" />
+		<!-- Example 6 -->
+		<div class="grid items-center justify-center h-screen">
+			<div x-data="{ show: false }" x-on:click.away="show = false">
+				<button
+					x-on:click="show = ! show"
+					class="bg-blue-200 py-2 px-6 rounded text-black mt-2"
+				>
+					Links
+				</button>
+				<div
+					class="absolute bg-black text-white py-2 rounded mt-1"
+					x-show="show"
+					x-transition:enter="transition duration-200 transform ease-out"
+					x-transition:enter-start="scale-75"
+					x-transition:enter-end="scale-100"
+					x-transition:leave="transition duration-100 transform ease-in"
+					x-transition:leave-start=""
+					x-transition:leave-end="opacity-0 scale-90"
+				>
+					<a class="block hover:bg-gray-400 px-4 text-xs py-1" href="#">Edit</a>
+					<a class="block hover:bg-gray-400 px-4 text-xs py-1" href="#"
+						>Delete</a
+					>
+					<a class="block hover:bg-gray-400 px-4 text-xs py-1" href="#"
+						>Report Spam</a
+					>
+				</div>
+			</div>
+		</div>
+
+		<hr class="mt-6" />
+		<!-- Example 7 -->
+		<div>
+			<div x-data class="grid items-center justify-center h-screen">
+				<button
+					x-on:click="$dispatch('flash', { message: 'Foobar', level:2 })"
+					class="bg-blue-200 py-2 px-6 rounded text-black mt-2"
+				>
+					Trigger Flash message
+				</button>
+			</div>
+			<div
+				x-data="{ show: false, message: ''}"
+				x-show.transition.opacity.scale.75="show"
+				x-on:flash.window="
+                    show = true; 
+                    message = $event.detail.message;
+                    setTimeout( () => show = false, 3000);
+                    "
+				x-text="message"
+				class="
+					fixed
+					bottom-0
+					right-0
+					bg-green-500
+					text-white
+					p-2
+					mb-4
+					mr-4
+					rounded
+				"
+			></div>
+		</div>
+		<script>
+			window.flash = (message) =>
+				window.dispatchEvent(new CustomEvent("flash", { detail: message }));
+		</script>
+	</body>
+</html>
